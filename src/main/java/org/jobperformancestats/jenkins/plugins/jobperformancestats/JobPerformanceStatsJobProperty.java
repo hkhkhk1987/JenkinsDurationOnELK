@@ -1,4 +1,4 @@
-package org.datadog.jenkins.plugins.datadog;
+package org.jobperformancestats.jenkins.plugins.jobperformancestats;
 
 import hudson.Extension;
 import hudson.FilePath;
@@ -17,23 +17,23 @@ import org.kohsuke.stapler.DataBoundSetter;
 import org.kohsuke.stapler.StaplerRequest;
 
 /**
- * Create a job property for use with Datadog plugin.
+ * Create a job property for use with JobPerformanceStats plugin.
  */
-public class DatadogJobProperty<T extends Job<?,?>> extends JobProperty<T> {
-  private static final Logger LOGGER =  Logger.getLogger(DatadogBuildListener.class.getName());
-  private static final String DISPLAY_NAME = "Datadog Job Tagging";
+public class JobPerformanceStatsJobProperty<T extends Job<?,?>> extends JobProperty<T> {
+  private static final Logger LOGGER =  Logger.getLogger(JobPerformanceStatsBuildListener.class.getName());
+  private static final String DISPLAY_NAME = "JobPerformanceStats Job Tagging";
   private String tagProperties = null;
   private String tagFile = null;
   private boolean emitOnCheckout = false;
 
   /**
-   * Runs when the {@link DatadogJobProperty} class is created.
+   * Runs when the {@link JobPerformanceStatsJobProperty} class is created.
    */
   @DataBoundConstructor
-  public DatadogJobProperty( ) { }
+  public JobPerformanceStatsJobProperty( ) { }
 
   /**
-   * Gets a list of tag properties to be submitted with the Build to Datadog.
+   * Gets a list of tag properties to be submitted with the Build to JobPerformanceStats.
    *
    * @return a String representing a list of tag properties.
    */
@@ -63,7 +63,7 @@ public class DatadogJobProperty<T extends Job<?,?>> extends JobProperty<T> {
   public JobProperty<?> reconfigure(StaplerRequest req, @Nonnull JSONObject form)
           throws Descriptor.FormException {
 
-    DatadogJobProperty prop = (DatadogJobProperty) super.reconfigure(req, form);
+    JobPerformanceStatsJobProperty prop = (JobPerformanceStatsJobProperty) super.reconfigure(req, form);
     System.out.println(form);
     boolean isEnableFile = form.getBoolean("enableFile");
     boolean isEnableTagProperties = form.getBoolean("enableProperty");
@@ -119,7 +119,7 @@ public class DatadogJobProperty<T extends Job<?,?>> extends JobProperty<T> {
 
   /**
    *
-   * @return - A {@link Boolean} indicating if the user has configured Datadog to emit the
+   * @return - A {@link Boolean} indicating if the user has configured JobPerformanceStats to emit the
    *         - an event after checkout.
    */
   public boolean isEmitOnCheckout() {
@@ -137,7 +137,7 @@ public class DatadogJobProperty<T extends Job<?,?>> extends JobProperty<T> {
   }
 
   /**
-   * Method to read the contents of the specified file in the {@link DatadogJobProperty}
+   * Method to read the contents of the specified file in the {@link JobPerformanceStatsJobProperty}
    *
    * @param r - Current build
    * @return - A String containing the contents of the scanned file. Returns null when
@@ -165,7 +165,7 @@ public class DatadogJobProperty<T extends Job<?,?>> extends JobProperty<T> {
   }
 
   @Extension
-  public static final class DatadogJobPropertyDescriptorImpl
+  public static final class JobPerformanceStatsJobPropertyDescriptorImpl
     extends JobPropertyDescriptor {
 
     /**

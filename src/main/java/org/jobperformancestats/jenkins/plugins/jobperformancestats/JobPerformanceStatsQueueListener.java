@@ -1,4 +1,4 @@
-package org.datadog.jenkins.plugins.datadog;
+package org.jobperformancestats.jenkins.plugins.jobperformancestats;
 
 import hudson.EnvVars;
 import hudson.Extension;
@@ -14,11 +14,11 @@ import net.sf.json.JSONObject;
  * us to compute metrics related to the size of the queue.
  */
 @Extension
-public class DatadogQueueListener extends PeriodicWork {
+public class JobPerformanceStatsQueueListener extends PeriodicWork {
   private static final String METRIC = "v1/series";
   private static final long RECURRENCE_PERIOD = TimeUnit.MINUTES.toMillis(1);
 
-  private static final Logger logger = Logger.getLogger(DatadogQueueListener.class.getName());
+  private static final Logger logger = Logger.getLogger(JobPerformanceStatsQueueListener.class.getName());
   private static final Queue queue = Queue.getInstance();
   private static final EnvVars envVars = new EnvVars();
 
@@ -29,7 +29,7 @@ public class DatadogQueueListener extends PeriodicWork {
 
   @Override
   protected void doRun() throws Exception {
-    if ( DatadogUtilities.isApiKeyNull() ) {
+    if ( JobPerformanceStatsUtilities.isApiKeyNull() ) {
       return;
     }
     logger.fine("doRun called: Computing queue metrics");
@@ -41,7 +41,7 @@ public class DatadogQueueListener extends PeriodicWork {
     JSONArray points = new JSONArray();
     JSONArray point = new JSONArray();
 
-    long currentTime = System.currentTimeMillis() / DatadogBuildListener.THOUSAND_LONG;
+    long currentTime = System.currentTimeMillis() / JobPerformanceStatsBuildListener.THOUSAND_LONG;
     point.add(currentTime); // current time, s
     point.add(value);
     points.add(point); // api expects a list of points
@@ -50,7 +50,7 @@ public class DatadogQueueListener extends PeriodicWork {
     metric.put("metric", name);
     metric.put("points", points);
     metric.put("type", "gauge");
-    metric.put("host", DatadogUtilities.getHostname(envVars)); // string
+    metric.put("host", JobPerformanceStatsUtilities.getHostname(envVars)); // string
 
     // Place metric as item of series list
     JSONArray series = new JSONArray();
@@ -63,7 +63,7 @@ public class DatadogQueueListener extends PeriodicWork {
     logger.fine(String.format("Resulting payload: %s", payload.toString()));
 
     try {
-      DatadogHttpRequests.post(payload, METRIC);
+      JobPerformanceStatsHttpRequests.post(payload, METRIC);
     } catch (Exception e) {
       logger.severe(e.toString());
     }

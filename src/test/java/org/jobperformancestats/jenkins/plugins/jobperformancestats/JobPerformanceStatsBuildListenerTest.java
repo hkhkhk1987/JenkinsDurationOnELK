@@ -1,4 +1,4 @@
-package org.datadog.jenkins.plugins.datadog;
+package org.jobperformancestats.jenkins.plugins.jobperformancestats;
 
 import hudson.EnvVars;
 import hudson.model.*;
@@ -24,36 +24,36 @@ import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.*;
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({DatadogHttpRequests.class, DatadogUtilities.class, Jenkins.class})
-public class DatadogBuildListenerTest {
+@PrepareForTest({JobPerformanceStatsHttpRequests.class, JobPerformanceStatsUtilities.class, Jenkins.class})
+public class JobPerformanceStatsBuildListenerTest {
     @Mock
     private Jenkins jenkins;
 
-    private DatadogBuildListener datadogBuildListener;
+    private JobPerformanceStatsBuildListener jobperformancestatsBuildListener;
 
     @Before
     public void setUp() throws Exception {
         PowerMockito.mockStatic(Jenkins.class);
         PowerMockito.when(Jenkins.getInstance()).thenReturn(jenkins);
 
-        PowerMockito.mockStatic(DatadogUtilities.class);
-        when(DatadogUtilities.isJobTracked(anyString())).thenReturn(true);
-        when(DatadogUtilities.assembleTags(any(JSONObject.class), any(HashMap.class))).thenReturn(new JSONArray());
-        PowerMockito.mockStatic(DatadogHttpRequests.class);
+        PowerMockito.mockStatic(JobPerformanceStatsUtilities.class);
+        when(JobPerformanceStatsUtilities.isJobTracked(anyString())).thenReturn(true);
+        when(JobPerformanceStatsUtilities.assembleTags(any(JSONObject.class), any(HashMap.class))).thenReturn(new JSONArray());
+        PowerMockito.mockStatic(JobPerformanceStatsHttpRequests.class);
 
-        datadogBuildListener = spy(new DatadogBuildListener());
-        DatadogBuildListener.DescriptorImpl descriptorMock = descriptor();
-        when(DatadogUtilities.getDatadogDescriptor()).thenReturn(descriptorMock);
+        jobperformancestatsBuildListener = spy(new JobPerformanceStatsBuildListener());
+        JobPerformanceStatsBuildListener.DescriptorImpl descriptorMock = descriptor();
+        when(JobPerformanceStatsUtilities.getJobPerformanceStatsDescriptor()).thenReturn(descriptorMock);
     }
 
-  
+
     @Test
     public void onCompleted_duration_fromRun() throws Exception {
         Run run = run();
         when(run.getDuration()).thenReturn(123000L);
 
         
-        datadogBuildListener.onCompleted(run, mock(TaskListener.class));
+        jobperformancestatsBuildListener.onCompleted(run, mock(TaskListener.class));
 
         JSONObject series = capturePostMetricRequestPayload();
         assertEquals("jenkins.job.duration", series.getString("metric"));
@@ -65,7 +65,7 @@ public class DatadogBuildListenerTest {
         Run run = run();
         when(run.getDuration()).thenReturn(0L); // pipeline jobs always return 0
 
-        datadogBuildListener.onCompleted(run, mock(TaskListener.class));
+        jobperformancestatsBuildListener.onCompleted(run, mock(TaskListener.class));
         JSONObject series = capturePostMetricRequestPayload();
         assertEquals("jenkins.job.duration", series.getString("metric"));
         assertNotEquals(0, valueOfFirstPoint(series), 0);
@@ -99,14 +99,14 @@ public class DatadogBuildListenerTest {
         return new EnvVars();
     }
 
-    private DatadogBuildListener.DescriptorImpl descriptor() {
-        return mock(DatadogBuildListener.DescriptorImpl.class);
+    private JobPerformanceStatsBuildListener.DescriptorImpl descriptor() {
+        return mock(JobPerformanceStatsBuildListener.DescriptorImpl.class);
     }
 
     private JSONObject capturePostMetricRequestPayload() throws IOException {
         PowerMockito.verifyStatic();
         ArgumentCaptor<JSONObject> captor = ArgumentCaptor.forClass(JSONObject.class);
-        DatadogHttpRequests.post(captor.capture(), eq(DatadogBuildListener.METRIC));
+        JobPerformanceStatsHttpRequests.post(captor.capture(), eq(JobPerformanceStatsBuildListener.METRIC));
 
         return captor.getValue().getJSONArray("series").getJSONObject(0);
     }

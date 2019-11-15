@@ -1,4 +1,4 @@
-package org.datadog.jenkins.plugins.datadog;
+package org.jobperformancestats.jenkins.plugins.jobperformancestats;
 
 import hudson.EnvVars;
 import hudson.model.Run;
@@ -24,18 +24,18 @@ import jenkins.model.Jenkins;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import org.apache.commons.lang.StringUtils;
-import static org.datadog.jenkins.plugins.datadog.DatadogBuildListener.getOS;
+import static org.jobperformancestats.jenkins.plugins.jobperformancestats.JobPerformanceStatsBuildListener.getOS;
 
-public class DatadogUtilities {
+public class JobPerformanceStatsUtilities {
 
-  private static final Logger logger =  Logger.getLogger(DatadogSCMListener.class.getName());
+  private static final Logger logger =  Logger.getLogger(JobPerformanceStatsSCMListener.class.getName());
   /**
    *
-   * @return - The descriptor for the Datadog plugin. In this case the global
+   * @return - The descriptor for the JobPerformanceStats plugin. In this case the global
    *         - configuration.
    */
-  public static DatadogBuildListener.DescriptorImpl getDatadogDescriptor() {
-    DatadogBuildListener.DescriptorImpl desc = (DatadogBuildListener.DescriptorImpl)Jenkins.getInstance().getDescriptorOrDie(DatadogBuildListener.class);
+  public static JobPerformanceStatsBuildListener.DescriptorImpl getJobPerformanceStatsDescriptor() {
+    JobPerformanceStatsBuildListener.DescriptorImpl desc = (JobPerformanceStatsBuildListener.DescriptorImpl)Jenkins.getInstance().getDescriptorOrDie(JobPerformanceStatsBuildListener.class);
     return desc;
   }
 
@@ -44,7 +44,7 @@ public class DatadogUtilities {
    * @return - The hostname configured in the global configuration. Shortcut method.
    */
   public static String getHostName()  {
-    return DatadogUtilities.getDatadogDescriptor().getHostname();
+    return JobPerformanceStatsUtilities.getJobPerformanceStatsDescriptor().getHostname();
   }
 
   /**
@@ -53,7 +53,7 @@ public class DatadogUtilities {
    * @param hostName - A string representing the hostname
    */
   public static void setHostName(String hostName)  {
-    DatadogUtilities.getDatadogDescriptor().setHostname(hostName);
+    JobPerformanceStatsUtilities.getJobPerformanceStatsDescriptor().setHostname(hostName);
   }
 
   /**
@@ -61,7 +61,7 @@ public class DatadogUtilities {
    * @return - The api key configured in the global configuration. Shortcut method.
    */
   public static Secret getApiKey() {
-    return DatadogUtilities.getDatadogDescriptor().getApiKey();
+    return JobPerformanceStatsUtilities.getJobPerformanceStatsDescriptor().getApiKey();
   }
 
   /**
@@ -71,7 +71,7 @@ public class DatadogUtilities {
    * @param apiKey - A string representing an apiKey
    */
   public static void setApiKey(String apiKey) {
-    DatadogUtilities.getDatadogDescriptor().setApiKey(apiKey);
+    JobPerformanceStatsUtilities.getJobPerformanceStatsDescriptor().setApiKey(apiKey);
   }
 
   /**
@@ -81,7 +81,7 @@ public class DatadogUtilities {
    * @return boolean - apiKey is null
    */
   public static boolean isApiKeyNull() {
-    return Secret.toString(DatadogUtilities.getApiKey()).isEmpty();
+    return Secret.toString(JobPerformanceStatsUtilities.getApiKey()).isEmpty();
   }
 
   /**
@@ -89,14 +89,14 @@ public class DatadogUtilities {
    * @return - The list of excluded jobs configured in the global configuration. Shortcut method.
    */
   public static String getBlacklist() {
-    return DatadogUtilities.getDatadogDescriptor().getBlacklist();
+    return JobPerformanceStatsUtilities.getJobPerformanceStatsDescriptor().getBlacklist();
   }
   /**
    *
    * @return - The list of included jobs configured in the global configuration. Shortcut method.
    */
   public static String getWhitelist() {
-    return DatadogUtilities.getDatadogDescriptor().getWhitelist();
+    return JobPerformanceStatsUtilities.getJobPerformanceStatsDescriptor().getWhitelist();
   }
 
   /**
@@ -104,7 +104,7 @@ public class DatadogUtilities {
    * @return - The list of included jobs configured in the global configuration. Shortcut method.
    */
   public static String getGlobalJobTags() {
-    return DatadogUtilities.getDatadogDescriptor().getGlobalJobTags();
+    return JobPerformanceStatsUtilities.getJobPerformanceStatsDescriptor().getGlobalJobTags();
   }
 
   /**
@@ -112,7 +112,7 @@ public class DatadogUtilities {
    * @return - The target API URL
    */
   public static String getTargetMetricURL()  {
-    return DatadogUtilities.getDatadogDescriptor().getTargetMetricURL();
+    return JobPerformanceStatsUtilities.getJobPerformanceStatsDescriptor().getTargetMetricURL();
   }
 
   /**
@@ -122,17 +122,17 @@ public class DatadogUtilities {
    * @return a boolean to signify if the jobName is or is not blacklisted or whitelisted.
    */
   public static boolean isJobTracked(final String jobName) {
-    return !DatadogUtilities.isJobBlacklisted(jobName) && DatadogUtilities.isJobWhitelisted(jobName);
+    return !JobPerformanceStatsUtilities.isJobBlacklisted(jobName) && JobPerformanceStatsUtilities.isJobWhitelisted(jobName);
   }
 
   /**
    * Retrieve the list of tags from the Config file if regex Jobs was checked
    *  @param jobName - A string containing the name of some job
-   *  @return - A Map of values containing the key and value of each Datadog tag to apply to the metric/event
+   *  @return - A Map of values containing the key and value of each JobPerformanceStats tag to apply to the metric/event
    */
   public static Map<String,String> getRegexJobTags(String jobName) {
     Map<String,String> tags = new HashMap<String,String>();
-    final List<List<String>> globalTags = DatadogUtilities.regexJoblistStringtoList( DatadogUtilities.getGlobalJobTags() );
+    final List<List<String>> globalTags = JobPerformanceStatsUtilities.regexJoblistStringtoList( JobPerformanceStatsUtilities.getGlobalJobTags() );
 
     logger.fine(String.format("The list of Global Job Tags are: %s", globalTags));
 
@@ -171,7 +171,7 @@ public class DatadogUtilities {
    * @return a boolean to signify if the jobName is or is not blacklisted.
    */
   public static boolean isJobBlacklisted(final String jobName) {
-    final List<String> blacklist = DatadogUtilities.joblistStringtoList( DatadogUtilities.getBlacklist() );
+    final List<String> blacklist = JobPerformanceStatsUtilities.joblistStringtoList( JobPerformanceStatsUtilities.getBlacklist() );
     return blacklist.contains(jobName.toLowerCase());
   }
 
@@ -182,7 +182,7 @@ public class DatadogUtilities {
    * @return a boolean to signify if the jobName is or is not whitelisted.
    */
   public static boolean isJobWhitelisted(final String jobName) {
-    final List<String> whitelist = DatadogUtilities.joblistStringtoList( DatadogUtilities.getWhitelist() );
+    final List<String> whitelist = JobPerformanceStatsUtilities.joblistStringtoList( JobPerformanceStatsUtilities.getWhitelist() );
     
     // Check if the user config is using regexes
     return whitelist.isEmpty() || whitelist.contains(jobName.toLowerCase());
@@ -232,7 +232,7 @@ public class DatadogUtilities {
   }
 
   /**
-   * This method parses the contents of the configured Datadog tags. If they are present.
+   * This method parses the contents of the configured JobPerformanceStats tags. If they are present.
    * Takes the current build as a parameter. And returns the expanded tags and their
    * values in a HashMap.
    *
@@ -249,7 +249,7 @@ public class DatadogUtilities {
           InterruptedException {
     HashMap<String,String> map = new HashMap<String, String>();
 
-    DatadogJobProperty property = DatadogUtilities.retrieveProperty(run);
+    JobPerformanceStatsJobProperty property = JobPerformanceStatsUtilities.retrieveProperty(run);
 
     // If Null, nothing to retrieve
     if( property == null ) {
@@ -298,7 +298,7 @@ public class DatadogUtilities {
   public static HashMap<String,String> buildExtraTags(Run run, TaskListener listener) {
     HashMap<String,String> extraTags = new HashMap<String, String>();
     try {
-      extraTags = DatadogUtilities.parseTagList(run, listener);
+      extraTags = JobPerformanceStatsUtilities.parseTagList(run, listener);
     } catch (IOException ex) {
       logger.severe(ex.getMessage());
     } catch (InterruptedException ex) {
@@ -310,12 +310,12 @@ public class DatadogUtilities {
   /**
    *
    * @param r - Current build.
-   * @return - The configured {@link DatadogJobProperty}. Null if not there
+   * @return - The configured {@link JobPerformanceStatsJobProperty}. Null if not there
    */
   @CheckForNull
-  public static DatadogJobProperty retrieveProperty(Run r) {
-    DatadogJobProperty property = (DatadogJobProperty)r.getParent()
-            .getProperty(DatadogJobProperty.class);
+  public static JobPerformanceStatsJobProperty retrieveProperty(Run r) {
+    JobPerformanceStatsJobProperty property = (JobPerformanceStatsJobProperty)r.getParent()
+            .getProperty(JobPerformanceStatsJobProperty.class);
     return property;
   }
   /**
@@ -336,7 +336,7 @@ public class DatadogUtilities {
     String[] UNIX_OS = {"mac", "linux", "freebsd", "sunos"};
 
     // Check hostname configuration from Jenkins
-    String hostname = DatadogUtilities.getHostName();
+    String hostname = JobPerformanceStatsUtilities.getHostName();
     if ( (hostname != null) && isValidHostname(hostname) ) {
       logger.fine(String.format("Using hostname set in 'Manage Plugins'. Hostname: %s", hostname));
       return hostname;
@@ -397,7 +397,7 @@ public class DatadogUtilities {
     // Never found the hostname
     if ( (hostname == null) || "".equals(hostname) ) {
       logger.warning("Unable to reliably determine host name. You can define one in "
-                     + "the 'Manage Plugins' section under the 'Datadog Plugin' section.");
+                     + "the 'Manage Plugins' section under the 'JobPerformanceStats Plugin' section.");
     }
     return null;
   }
@@ -425,9 +425,9 @@ public class DatadogUtilities {
     }
 
     // Ensure proper length
-    if ( hostname.length() > DatadogBuildListener.MAX_HOSTNAME_LEN ) {
+    if ( hostname.length() > JobPerformanceStatsBuildListener.MAX_HOSTNAME_LEN ) {
       logger.fine(String.format("Hostname: %s is too long (max length is %s characters)",
-                                hostname, DatadogBuildListener.MAX_HOSTNAME_LEN));
+                                hostname, JobPerformanceStatsBuildListener.MAX_HOSTNAME_LEN));
       return false;
     }
 
@@ -511,14 +511,14 @@ public class DatadogUtilities {
    * of tags.
    *
    * @param builddata - A JSONObject containing a builds metadata.
-   * @param extra - A list of tags, that are contributed via {@link DatadogJobProperty}.
+   * @param extra - A list of tags, that are contributed via {@link JobPerformanceStatsJobProperty}.
    * @return a JSONArray containing a specific subset of tags retrieved from a builds metadata.
    */
   public static JSONArray assembleTags(final JSONObject builddata, final Map<String,String> extra) {
     JSONArray tags = new JSONArray();
 
     tags.add("job:" + builddata.get("job"));
-    if ( (builddata.get("node") != null) && DatadogUtilities.getDatadogDescriptor().getTagNode() ) {
+    if ( (builddata.get("node") != null) && JobPerformanceStatsUtilities.getJobPerformanceStatsDescriptor().getTagNode() ) {
       tags.add("node:" + builddata.get("node"));
     }
 
@@ -548,14 +548,14 @@ public class DatadogUtilities {
   public static String durationToString(final double duration) {
     String output = "(";
     String format = "%.2f";
-    if ( duration < DatadogBuildListener.MINUTE ) {
+    if ( duration < JobPerformanceStatsBuildListener.MINUTE ) {
       output = output + String.format(format, duration) + " secs)";
-    } else if ( (DatadogBuildListener.MINUTE <= duration)
-                && (duration < DatadogBuildListener.HOUR) ) {
-      output = output + String.format(format, duration / DatadogBuildListener.MINUTE)
+    } else if ( (JobPerformanceStatsBuildListener.MINUTE <= duration)
+                && (duration < JobPerformanceStatsBuildListener.HOUR) ) {
+      output = output + String.format(format, duration / JobPerformanceStatsBuildListener.MINUTE)
                + " mins)";
-    } else if ( DatadogBuildListener.HOUR <= duration ) {
-      output = output + String.format(format, duration / DatadogBuildListener.HOUR)
+    } else if ( JobPerformanceStatsBuildListener.HOUR <= duration ) {
+      output = output + String.format(format, duration / JobPerformanceStatsBuildListener.HOUR)
                + " hrs)";
     }
 

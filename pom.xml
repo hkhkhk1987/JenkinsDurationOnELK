@@ -11,27 +11,27 @@
     <relativePath/>
   </parent>
 
-  <groupId>org.datadog.jenkins.plugins</groupId>
-  <artifactId>datadog</artifactId>
-  <version>0.7.1-SNAPSHOT</version>
+  <groupId>com.telenav.jenkins.plugins</groupId>
+  <artifactId>jobperformancestats</artifactId>
+  <version>1.0.0-SNAPSHOT</version>
   <packaging>hpi</packaging>
 
-  <name>Datadog Plugin</name>
-  <description>This plugin is used to forward metrics, events, and service checks to your account at Datadog, automatically.</description>
-  <url>https://wiki.jenkins-ci.org/display/JENKINS/Datadog+Plugin</url>
+  <name>JobPerformanceStats Plugin</name>
+  <description>This plugin is generate metrics from jenkins and send to ELK.</description>
+  <url></url>
 
   <licenses>
     <license>
-      <name>MIT</name>
-      <url>http://www.opensource.org/licenses/mit-license.php</url>
+      <name></name>
+      <url></url>
     </license>
   </licenses>
 
   <developers>
     <developer>
-      <id>datadog</id>
-      <name>Datadog</name>
-      <email>dev@datadoghq.com</email>
+      <id>khou</id>
+      <name>kun.hou</name>
+      <email>khou@telenavsoftware.com</email>
     </developer>
   </developers>
 
@@ -67,9 +67,9 @@
       <version>4.5.6</version>
     </dependency>
     <dependency>
-        <groupId>com.datadoghq</groupId>
-        <artifactId>java-dogstatsd-client</artifactId>
-        <version>2.1.1</version>
+      <groupId>com.datadoghq</groupId>
+      <artifactId>java-dogstatsd-client</artifactId>
+      <version>2.1.1</version>
     </dependency>
 
     <dependency>
@@ -90,6 +90,36 @@
       <version>${powermock.version}</version>
       <scope>test</scope>
     </dependency>
+
+    <dependency>
+      <groupId>io.prometheus</groupId>
+      <artifactId>simpleclient</artifactId>
+      <version>0.0.10</version>
+    </dependency>
+    <dependency>
+      <groupId>io.prometheus</groupId>
+      <artifactId>simpleclient_pushgateway</artifactId>
+      <version>0.0.10</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.kohsuke.stapler</groupId>
+      <artifactId>json-lib</artifactId>
+      <version>2.4-jenkins-2</version>
+    </dependency>
+
+    <dependency>
+      <groupId>io.jenkins.blueocean</groupId>
+      <artifactId>blueocean-rest</artifactId>
+      <version>1.2.4</version>
+    </dependency>
+
+    <dependency>
+      <groupId>io.jenkins.blueocean</groupId>
+      <artifactId>blueocean-rest-impl</artifactId>
+      <version>1.2.4</version>
+    </dependency>
+
   </dependencies>
 
   <build>

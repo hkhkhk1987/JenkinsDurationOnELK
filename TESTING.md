@@ -25,7 +25,7 @@ Run a Jenkins docker image, exposing ports 8080 and 50000:
 
 From here, you'll connect to Jenkins UI from your browser, through `localhost:8080`. Once you are connected, follow these steps:
 
-1. Install the Datadog Plugin, either via the Update Center, or via .hpi
+1. Install the JobPerformanceStats Plugin, either via the Update Center, or via .hpi
 2. Configure with an API key
 3. Create a test build
 
